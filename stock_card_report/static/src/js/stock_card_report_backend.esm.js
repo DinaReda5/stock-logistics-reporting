@@ -9,8 +9,10 @@ export class report_backend extends Component {
     
 
     async start() {
-        var $ = require('jquery'); 
-        $(".stock_card_reports_page").html(this.lines.html);
+    const el = document.querySelector(".stock_card_reports_page");
+    if (el) {
+        el.innerHTML = this.lines.html;
+        }
     }
 
     setup() {
