@@ -58,13 +58,13 @@ class StockCardReport(models.TransientModel):
         )
         self._cr.execute(
             """
-            SELECT move.date, move.product_id, move.product_qty,
+         SELECT move.date, move.product_id, move.quantity as product_qty,
                 move.product_uom_qty, move.product_uom, move.reference,
                 move.location_id, move.location_dest_id,
                 case when move.location_dest_id in %s
-                    then move.product_qty end as product_in,
+                    then move.quantity end as product_in,
                 case when move.location_id in %s
-                    then move.product_qty end as product_out,
+                    then move.quantity end as product_out,
                 case when move.date < %s then True else False end as is_initial,
                 move.picking_id
             FROM stock_move move
