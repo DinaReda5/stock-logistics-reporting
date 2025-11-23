@@ -61,6 +61,7 @@
             <div class="act_as_cell" />
             <div class="act_as_cell">Initial</div>
             <div class="act_as_cell" />
+              <div class="act_as_cell" />
             <div class="act_as_cell" />
             <div class="act_as_cell right">
               <t t-out="'{0:,.3f}'.format(initial)" />
@@ -112,6 +113,7 @@
         <div class="act_as_cell">Reference</div>
         <div class="act_as_cell">In</div>
         <div class="act_as_cell">Out</div>
+        <div class="act_as_cell">Destination Location</div>
         <div class="act_as_cell">Balance</div>
       </div>
     </div>
@@ -131,6 +133,15 @@
       <div class="act_as_cell right">
         <t t-out="'{0:,.3f}'.format(product_line.product_out)" />
       </div>
+ <div class="act_as_cell left">
+  <t t-out="
+      product_line.location_dest_id.display_name if product_line.location_dest_id != o.location_id
+      else (
+          o.location_id.display_name if product_line.location_id.display_name in ('Partners/Vendors', 'Virtual Locations/Inventory adjustment')
+          else product_line.location_id.display_name
+      )
+  "/>
+ </div>
       <div class="act_as_cell right">
         <t t-out="'{0:,.3f}'.format(product_balance)" />
       </div>
