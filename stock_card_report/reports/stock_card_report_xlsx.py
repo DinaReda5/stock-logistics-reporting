@@ -91,7 +91,12 @@ class ReportStockCardReportXlsx(models.AbstractModel):
                 "data": {"value": self._render("output")},
                 "width": 25,
             },
-            "5_balance": {
+            "5_location": {
+                "header": {"value": "Destination Location"},
+                "data": {"value": self._render("location")},
+                "width": 25,
+            },
+            "6_balance": {
                 "header": {"value": "Balance"},
                 "data": {"value": self._render("balance")},
                 "width": 25,
