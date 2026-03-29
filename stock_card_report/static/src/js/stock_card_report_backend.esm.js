@@ -1,31 +1,17 @@
 /** @odoo-module **/
 
-import {Component, onMounted, onWillStart} from "@odoo/owl";
+import {Component, onWillStart, onMounted, onPatched, useState, useRef} from "@odoo/owl";
 import {download} from "@web/core/network/download";
 import {registry} from "@web/core/registry";
 import {useService} from "@web/core/utils/hooks";
 
 export class report_backend extends Component {
-    
-
-    async start() {
-    const el = document.querySelector(".stock_card_reports_page");
-    if (el) {
-        el.innerHTML = this.lines.html;
-        }
-    }
+    static template = "report_stock_card_html";
 
     setup() {
-        onWillStart(async () => {
-            this.lines = await this.orm.call("report.stock.card.report", "get_html", [
-                this.context,
-            ]);
-        });
-        onMounted(async () => {
-            this.start();
-        });
-
         this.orm = useService("orm");
+        this.state = useState({lines: null});
+        this.reportContentRef = useRef("reportContent");
 
         const {active_id, active_model, context, ttype, url} =
             this.props.action.context;
@@ -37,29 +23,55 @@ export class report_backend extends Component {
             model: active_model || false,
             ttype: ttype || false,
         });
-    }
-    onClickPrint() {
-        const data = JSON.stringify(this.lines.html);
-        const url = this.controllerUrl
-            .replace(":active_id", this.context.active_id)
-            .replace(":active_model", this.context.model)
-            .replace("output_format", "pdf");
-        download({
-            data: {data},
-            url,
+
+        onWillStart(async () => {
+            this.state.lines = await this.orm.call("report.stock.card.report", "get_html", [
+                this.context,
+            ]);
+        });
+
+        onMounted(() => {
+            this.updateReportContent();
+        });
+
+        onPatched(() => {
+            this.updateReportContent();
         });
     }
-    onClickExport() {
-        const data = JSON.stringify(this.lines.html);
-        const url = this.controllerUrl
+
+    updateReportContent() {
+        if (this.reportContentRef.el && this.state.lines && this.state.lines.html) {
+            this.reportContentRef.el.innerHTML = this.state.lines.html;
+        }
+    }
+
+    onClickPrint() {
+        let url = this.controllerUrl
             .replace(":active_id", this.context.active_id)
-            .replace(":active_model", this.context.model)
-            .replace("output_format", "xlsx");
+            .replace("output_format", "pdf");
+        // Ensure URL starts with /
+        if (!url.startsWith("/")) {
+            url = "/" + url;
+        }
         download({
-            data: {data},
             url,
+            data: {},
+        });
+    }
+
+    onClickExport() {
+        let url = this.controllerUrl
+            .replace(":active_id", this.context.active_id)
+            .replace("output_format", "xlsx");
+        // Ensure URL starts with /
+        if (!url.startsWith("/")) {
+            url = "/" + url;
+        }
+        download({
+            url,
+            data: {},
         });
     }
 }
-report_backend.template = "report_stock_card_html";
+
 registry.category("actions").add("stock_card_report_backend", report_backend);

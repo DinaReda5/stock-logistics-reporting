@@ -3,11 +3,8 @@
   <record id="action_report_stock_card_report_html" model="ir.actions.client">
     <field name="name">Stock Card Report</field>
     <field name="tag">stock_card_report_backend</field>
-    <field name="context" eval="{'url': 'stock/stock_card_report/output_format?active_id=:active_id', 'model': 'report.stock.card.report'}"/>
-
+    <field name="context" eval="{'url': 'stock/stock_card_report/output_format?active_id=:active_id', 'model': 'report.stock.card.report'}" />
   </record>
-
-  
 
   <record id="action_stock_card_report_pdf" model="ir.actions.report">
     <field name="name">Stock Card PDF</field>
