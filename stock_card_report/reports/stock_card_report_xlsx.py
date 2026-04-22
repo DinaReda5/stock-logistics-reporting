@@ -91,7 +91,17 @@ class ReportStockCardReportXlsx(models.AbstractModel):
                 "data": {"value": self._render("output")},
                 "width": 25,
             },
-            "5_balance": {
+             "5_location": {
+                "header": {"value": "Destination Location"},
+                "data": {"value": self._render("location")}, # edit
+                "width": 25,
+            },
+              "6_source_location": {
+                  "header": {"value": "Source Location"},
+                  "data": {"value": self._render("source_location")}, # edit
+                  "width": 25,
+              },
+            "7_balance": {
                 "header": {"value": "Balance"},
                 "data": {"value": self._render("balance")},
                 "width": 25,
@@ -182,6 +192,8 @@ class ReportStockCardReportXlsx(models.AbstractModel):
                     "reference": line.display_name or "",
                     "input": line.product_in or 0,
                     "output": line.product_out or 0,
+                    "location": line.location_dest_id.display_name if line.location_dest_id else line.location_id.display_name,
+                    "source_location": line.location_id.display_name if line.location_id else line.location_dest_id.display_name,
                     "balance": balance,
                 },
                 default_format=FORMATS["format_tcell_amount_right"],
